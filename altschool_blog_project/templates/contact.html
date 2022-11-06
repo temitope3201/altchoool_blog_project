@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <div class="content-section">
+        <div class="jumbotron">
+            <h2 class="display-4"> Would You Like To Reach Out?? </h2>
+            <a href="mailto:temitopeadebayo749@gmail.com" class="btn btn-secondary m-1"> Send us An Email </a> <br>
+            <a href="tel:+2349061780323" class="btn btn-secondary m-1"> Or Call Us </a>
+        </div>
+    </div>
+
+    <div class="content-section" >
+        <form method="POST" action="">
+            {{form.hidden_tag()}}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Contact Us</legend>
+                <div class="form-group">
+                    {{form.name.label(class="form-control-label")}}
+                    {% if form.name.errors %}
+                        {{form.name(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.name.errors %}
+                            <span>
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                        </div>
+                    {% else %}
+                        {{form.name(class="form-control form-control-lg")}}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{form.email.label(class="form-control-label")}}
+                    {% if form.email.errors %}
+                        {{form.email(class="form-control form-control-lg is-invalid")}}
+                        <div class="inavlid-feedback">
+                            {% for error in form.email.errors %}
+                            <span>
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                        </div>
+
+                    {% else %}
+                        {{form.email(class="form-control form-control-lg")}}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{form.message.label(class="form-control-label")}}
+                    {% if form.message.errors %}
+                        {{form.message(class="form-control form-control-lg is-invalid")}}
+                        <div class="invalid-feedback">
+                            {% for error in form.message.errors %}
+                            <span>
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                        </div>
+
+                    {% else %}
+                        {{form.message(class="form-control form-control-lg")}}
+                    {% endif %}
+                </div>
+                
+
+            </fieldset>
+            <br>
+            <div class="form-group">
+                {{form.submit (class="btn btn-outline-info")}}                   
+            </div>
+        </form>
+
+    </div>
+
+{% endblock content %}

@@ -19,7 +19,8 @@ from PIL import Image
 @app.route('/')
 def home():
 
-    posts = Post.query.all()
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page = page, per_page = 5)
 
     return render_template('home.html', posts = posts)
 
@@ -205,9 +206,10 @@ def delete_post(post_id):
 @login_required
 def get_user_posts(user_id):
     
+    page = request.args.get('page', 1, type=int)
     author = User.query.get_or_404(user_id)
     
-    posts = author.post
+    posts = Post.query.filter_by(author = author).order_by(Post.date_posted.desc()).paginate(page=page, per_page = 5)
 
     return render_template('user_posts.html', title = author.username, author = author, posts = posts)
 

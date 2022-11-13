@@ -1,15 +1,14 @@
 import email
-from email import message
 from fileinput import filename
 from turtle import title
 from altschool_blog_project import app, db, bcrypt, mail
 from flask import render_template, request, redirect, url_for, flash,abort
-from altschool_blog_project.forms import RegistrationForm, LoginForm, UpdateProfileForm, PostForm, ContactForm
+from altschool_blog_project.forms import RegistrationForm, LoginForm, UpdateProfileForm, PostForm, ContactForm, ResetRequestForm, ResetPasswordForm
 from altschool_blog_project.models import User,Post,Message
 from flask_login import login_user, current_user, logout_user, login_required
 import secrets, os
 from PIL import Image
-
+from flask_mail import Message
 
 
 
@@ -237,3 +236,56 @@ def contact():
 
     return render_template('contact.html', form = form, title = 'Contact')
 
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message('Password Reset Request', sender = 'temitopeadebayo749@gmail.com', recipients=[user.email])
+    msg.body = f"""
+        To reset Your password, visit the following link
+        {url_for('reset_password', token= token, _external = True)}
+
+        If you did not send this request simply ignore this mail
+    """
+    mail.send(msg)
+
+@app.route('/reset_password', methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    form = ResetRequestForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email = form.email.data).first()
+        send_reset_email(user)
+
+        flash('An Email Has Been Sent WIth Instructions on How To Change The Password', 'success')
+
+        return redirect(url_for('login'))
+
+    return render_template('reset_request.html', title = 'Reset Password', form = form)
+
+
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    user = User.verify_reset_token(token)
+
+    if user is None:
+        flash('The Token Is Invalid or Expired', 'warning')
+        return redirect(url_for('reset_request'))
+
+    form = ResetPasswordForm()
+
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+
+
+        db.session.commit()
+        flash(f' Your Password has been changed. You can now Log In', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('reset_password.html', title= "Reset PassWord", form = form)

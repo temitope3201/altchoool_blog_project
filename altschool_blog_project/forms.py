@@ -77,3 +77,22 @@ class ContactForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired(), Email()])
     message = TextAreaField('Message', validators=[DataRequired()])
     submit = SubmitField('Send Message')
+
+class ResetRequestForm(FlaskForm):
+
+    email = EmailField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+    def validate_email(self, email):
+        
+        user = User.query.filter_by(email = email.data).first()
+
+        if user is None:
+
+            raise ValidationError('The Email Does Not Exist, Create A New Account')
+
+class ResetPasswordForm(FlaskForm):
+
+    password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')

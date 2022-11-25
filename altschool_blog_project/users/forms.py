@@ -1,11 +1,8 @@
 import email
-from email import message
-from turtle import title
-from xml.dom import ValidationErr
 from flask_wtf import FlaskForm
+from wtforms import StringField, EmailField, PasswordField, SubmitField, BooleanField
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, TextAreaField, DateTimeField, EmailField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
 from altschool_blog_project.models import User
 from flask_login import current_user
 
@@ -65,19 +62,6 @@ class UpdateProfileForm(FlaskForm):
 
                 raise ValidationError('The email is already in use')
 
-class PostForm(FlaskForm):
-
-    title = StringField('Title', validators=[DataRequired()])
-    content = TextAreaField('Content', validators=[DataRequired()])
-    submit = SubmitField('Post')
-
-class ContactForm(FlaskForm):
-
-    name = StringField('Name', validators=[DataRequired()])
-    email = EmailField('Email', validators=[DataRequired(), Email()])
-    message = TextAreaField('Message', validators=[DataRequired()])
-    submit = SubmitField('Send Message')
-
 class ResetRequestForm(FlaskForm):
 
     email = EmailField('Email', validators=[DataRequired(), Email()])
@@ -96,3 +80,4 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField('New Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
+

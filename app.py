@@ -1,5 +1,7 @@
-from altschool_blog_project import app
-import os
+from altschool_blog_project import create_app
+
+app = create_app()
+
 
 
 
